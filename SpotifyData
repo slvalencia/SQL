@@ -1,0 +1,86 @@
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+song_key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+song_mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness decimal(8,7) NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL );
+
+SELECT * FROM BIT_DB.Spotifydata;
+
+--Who were the top 5 artists based on average popularity?
+
+SELECT artist_name, AVG(popularity) AS avg_popularity
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY popularity DESC
+LIMIT 5;
+
+--What track name had the highest energy and had a tempo of over 120?
+
+SELECT track_name, energy, tempo
+FROM BIT_DB.Spotifydata
+WHERE tempo>120
+ORDER BY energy DESC
+LIMIT 1;
+
+--List all the names of the songs and artists whose name starts with the letter 'D'
+
+SELECT track_name, artist_name
+FROM BIT_DB.Spotifydata
+WHERE artist_name LIKE 'D%';
+
+--Count the number of songs each artist has from most songs to least
+
+SELECT COUNT(track_name) AS song_count, artist_name
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY song_count DESC;
+
+--. What is the average loudness of tracks across different artists?
+
+SELECT artist_name, AVG(loudness) AS avg_loudness
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY avg_loudness DESC;
+
+--Which tracks have and acousticness that is not 0.321 and what are their artists?
+
+SELECT track_name, artist_name
+FROM BIT_DB.Spotifydata
+WHERE acousticness<>0.321;
+
+--What are the track names that have a featured artist and who are the artists?
+SELECT track_name, artist_name
+FROM BIT_DB.Spotifydata
+WHERE track_name LIKE '%feat%';
+
+--Which tracks have a an extremely slow tempo, slow tempo, moderate tempo, and fast tempo?
+SELECT track_name, ROUND(tempo),
+CASE WHEN ROUND(tempo)>=150 THEN "fast"
+WHEN ROUND(tempo)>=120 THEN "moderate"
+WHEN ROUND(tempo)>=100 THEN "slow"
+ELSE "extremely slow"
+END AS "tempo_speed"
+FROM BIT_DB.Spotifydata
+ORDER BY ROUND(tempo) ASC;
+
+----Which track has the slowest tempo?
+
+SELECT track_name, MIN(tempo) AS min_tempo
+FROM BIT_DB.Spotifydata
+GROUP BY track_name
+ORDER BY min_tempo ASC
+LIMIT 1;
